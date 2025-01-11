@@ -28,12 +28,12 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `kierowcy` (
-  `PESEL` bigint(20) NOT NULL,
+  `PESEL` bigint(11) NOT NULL,
   `Imię` varchar(50) DEFAULT NULL,
   `Nazwisko` varchar(50) DEFAULT NULL,
   `DataUrodzenia` date DEFAULT NULL,
   `NumerPrawoJazdy` varchar(20) DEFAULT NULL,
-  `Uprawnienia` varchar(100) DEFAULT NULL
+  `Uprawnienia` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -99,8 +99,8 @@ INSERT INTO `kierowcy` (`PESEL`, `Imię`, `Nazwisko`, `DataUrodzenia`, `NumerPra
 
 CREATE TABLE `login` (
   `ID` int(11) NOT NULL,
-  `Username` varchar(100) NOT NULL,
-  `Password` varchar(100) NOT NULL
+  `Username` varchar(50) NOT NULL,
+  `Password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -117,7 +117,7 @@ INSERT INTO `login` (`ID`, `Username`, `Password`) VALUES
 --
 
 CREATE TABLE `pojazdy` (
-  `PojazdID` int(11) NOT NULL,
+  `PojazdID` int(10) NOT NULL,
   `NumerVIN` varchar(17) DEFAULT NULL,
   `Marka` varchar(50) DEFAULT NULL,
   `Model` varchar(50) DEFAULT NULL,
@@ -192,11 +192,11 @@ INSERT INTO `pojazdy` (`PojazdID`, `NumerVIN`, `Marka`, `Model`, `RokProdukcji`,
 --
 
 CREATE TABLE `przegladtechniczny` (
-  `PrzegladID` int(11) NOT NULL,
-  `PojazdID` int(11) DEFAULT NULL,
+  `PrzegladID` int(10) NOT NULL,
+  `PojazdID` int(10) DEFAULT NULL,
   `DataPrzegladu` date DEFAULT NULL,
   `WynikPrzegladu` varchar(100) DEFAULT NULL,
-  `Uwagi` varchar(100) DEFAULT NULL
+  `Uwagi` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -314,7 +314,7 @@ INSERT INTO `przegladtechniczny` (`PrzegladID`, `PojazdID`, `DataPrzegladu`, `Wy
 CREATE TABLE `przypisania` (
   `PrzypisanieID` int(11) NOT NULL,
   `PojazdID` int(11) DEFAULT NULL,
-  `PESEL` bigint(20) DEFAULT NULL,
+  `PESEL` bigint(11) DEFAULT NULL,
   `DataPrzypisania` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -526,7 +526,7 @@ ALTER TABLE `login`
 -- AUTO_INCREMENT for table `pojazdy`
 --
 ALTER TABLE `pojazdy`
-  MODIFY `PojazdID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `PojazdID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- Constraints for dumped tables

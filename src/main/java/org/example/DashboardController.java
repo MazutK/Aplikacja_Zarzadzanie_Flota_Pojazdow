@@ -25,7 +25,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-
+/**
+ * author Kacper Mazur
+ * * @version 1.0
+ * Klasa główna aplikacji, służy do sterowania i zarządzania aplikacją
+ */
 public class DashboardController implements Initializable {
     public TableColumn ID_COL;
     public TableColumn Car_col_VIN;
@@ -163,7 +167,6 @@ public class DashboardController implements Initializable {
     private HBox topBar;
 
 
-
     //*********************************Zarządzanie Aplikacją*********************************//
 
     @FXML
@@ -171,6 +174,7 @@ public class DashboardController implements Initializable {
         Stage stage = (Stage) topBar.getScene().getWindow();
         stage.setIconified(true);
     }
+
     @FXML
     private void close(ActionEvent event) {
         Stage stage = (Stage) topBar.getScene().getWindow();
@@ -246,24 +250,25 @@ public class DashboardController implements Initializable {
     }
 
 
-
-
     //*********************************Połączenie z bazą danych*********************************//
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet result;
 
     //*********************************Zarządzanie Pojazdami*********************************//
-    //Odczyt z bazy danych
+
+    /**
+     * Pobiera listę pojazdów z bazy danych.
+     *
+     * @return lista obiektów {@link carData} reprezentujących pojazdy.
+     */
     public ObservableList<carData> CarListData() {
         ObservableList<carData> list = FXCollections.observableArrayList();
         String sql = "SELECT * FROM pojazdy";
 
         try {
             connection = database.connectDB();
-
             preparedStatement = connection.prepareStatement(sql);
-
             result = preparedStatement.executeQuery();
 
             while (result.next()) {
@@ -296,10 +301,11 @@ public class DashboardController implements Initializable {
         return list;
     }
 
-    //Dodanie do tabeli
-    private ObservableList<carData> NowCarListData;
+    /**
+     * Wyświetla listę pojazdów w tabeli na interfejsie użytkownika.
+     */
     public void ShowCarListData() {
-        NowCarListData = CarListData();
+        ObservableList<carData> NowCarListData = CarListData();
         ID_COL.setCellValueFactory(new PropertyValueFactory<>("Id"));
         Car_col_VIN.setCellValueFactory(new PropertyValueFactory<>("NrVin"));
         Car_col_Marka.setCellValueFactory(new PropertyValueFactory<>("Marka"));
@@ -313,11 +319,13 @@ public class DashboardController implements Initializable {
         Car_col_Typ.setCellValueFactory(new PropertyValueFactory<>("TypPojazdu"));
 
         CarTable.setItems(NowCarListData);
-
     }
 
-    //Wyszukiwanie
-    private ObservableList<carData> carList;
+    /**
+     * Wyszukuje pojazdy na podstawie danych wprowadzonych w polach tekstowych.
+     *
+     * @param event zdarzenie wywołujące akcję wyszukiwania.
+     */
     public void searchCarData(ActionEvent event) {
         // Pobieranie tekstu z każdego TextField
         String id = pojazdy_id.getText().toLowerCase().trim();
@@ -332,8 +340,7 @@ public class DashboardController implements Initializable {
         String ubezpieczenie = pojazdy_ubezpieczenie.getText().toLowerCase().trim();
         String przeglad = pojazdy_przeglad.getText().toLowerCase().trim();
 
-        // Pobranie danych z bazy
-        carList = CarListData();
+        ObservableList<carData> carList = CarListData();
 
         // Filtracja danych na podstawie wartości w TextField
         ObservableList<carData> filteredList = FXCollections.observableArrayList();
@@ -369,32 +376,30 @@ public class DashboardController implements Initializable {
         CarTable.setItems(filteredList);
     }
 
-    //Usuwanie
+    /**
+     * Usuwa wybrany pojazd z bazy danych.
+     *
+     * @param event zdarzenie wywołujące akcję usunięcia.
+     */
     public void deleteCar(ActionEvent event) {
         carData selectedCar = CarTable.getSelectionModel().getSelectedItem();
         if (selectedCar != null) {
             // Potwierdzenie przed usunięciem
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Potwierdzenie usunięcia");
-            alert.setHeaderText("Czy na pewno chcesz usunąć to ubezpieczenie?");
+            alert.setHeaderText("Czy na pewno chcesz usunąć ten pojazd?");
             alert.setContentText("Usunięcie jest nieodwracalne.");
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                Connection connection = null;
-                PreparedStatement preparedStatement = null;
-
                 try {
                     connection = database.connectDB();
-
-                    // Usunięcie ubezpieczenia
-                    String deleteInsuranceSql = "DELETE FROM pojazdy WHERE PojazdID = ?";
-                    preparedStatement = connection.prepareStatement(deleteInsuranceSql);
+                    String deleteSql = "DELETE FROM pojazdy WHERE PojazdID = ?";
+                    preparedStatement = connection.prepareStatement(deleteSql);
                     preparedStatement.setInt(1, selectedCar.getId());
                     preparedStatement.executeUpdate();
 
                     ShowCarListData();
-
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -409,15 +414,18 @@ public class DashboardController implements Initializable {
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Brak wybranego rekordu");
-            alert.setHeaderText("Nie wybrano rekordu do usunięcia");
-            alert.setContentText("Proszę wybrać rekord z tabeli przed usunięciem.");
+            alert.setHeaderText("Nie wybrano pojazdu do usunięcia");
+            alert.setContentText("Proszę wybrać pojazd z tabeli przed usunięciem.");
             alert.showAndWait();
         }
     }
 
-    //Dodawanie
+    /**
+     * Dodaje nowy pojazd do bazy danych.
+     *
+     * @param event zdarzenie wywołujące akcję dodania pojazdu.
+     */
     public void addCarToDatabase(ActionEvent event) {
-        // Pobieranie danych z TextField
         String vin = pojazdy_vin.getText().trim();
         String marka = pojazdy_marka.getText().trim();
         String model = pojazdy_model.getText().trim();
@@ -429,45 +437,37 @@ public class DashboardController implements Initializable {
         String ubezpieczenie = pojazdy_ubezpieczenie.getText().trim();
         String przeglad = pojazdy_przeglad.getText().trim();
 
-        // Sprawdzanie, czy wszystkie pola są uzupełnione
         if (vin.isEmpty() || marka.isEmpty() || model.isEmpty() || rok.isEmpty() || rejestr.isEmpty() ||
                 stanTech.isEmpty() || uprawnienia.isEmpty() || typ.isEmpty() || ubezpieczenie.isEmpty() || przeglad.isEmpty()) {
-            // Wyświetlenie komunikatu o błędzie, jeśli jakiekolwiek pole jest puste
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd");
             alert.setHeaderText("Wszystkie pola muszą być uzupełnione!");
             alert.showAndWait();
-            return; // Zatrzymanie kodu
+            return;
         }
 
-        String sql = "INSERT INTO pojazdy (NumerVIN, Marka, Model, RokProdukcji, NumerRejestracyjny, StanTechniczny, WymaganeUprawnienia, UbezpieczenieID,PrzeglądID, TypPojazdu) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pojazdy (NumerVIN, Marka, Model, RokProdukcji, NumerRejestracyjny, StanTechniczny, WymaganeUprawnienia, UbezpieczenieID, PrzeglądID, TypPojazdu) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             connection = database.connectDB();
             preparedStatement = connection.prepareStatement(sql);
-
-            // Ustawienie wartości parametrów zapytania
             preparedStatement.setString(1, vin);
             preparedStatement.setString(2, marka);
             preparedStatement.setString(3, model);
-            preparedStatement.setInt(4, Integer.parseInt(rok)); // Zamiana na int
+            preparedStatement.setInt(4, Integer.parseInt(rok));
             preparedStatement.setString(5, rejestr);
             preparedStatement.setString(6, stanTech);
             preparedStatement.setString(7, uprawnienia);
             preparedStatement.setString(8, typ);
-            preparedStatement.setInt(9, Integer.parseInt(ubezpieczenie)); // Zamiana na int
-            preparedStatement.setInt(10, Integer.parseInt(przeglad)); // Zamiana na int
-
-            // Wykonanie zapytania
+            preparedStatement.setInt(9, Integer.parseInt(ubezpieczenie));
+            preparedStatement.setInt(10, Integer.parseInt(przeglad));
             preparedStatement.executeUpdate();
 
-            // Komunikat o powodzeniu
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Sukces");
             alert.setHeaderText("Pojazd został dodany do bazy danych!");
             alert.showAndWait();
             ShowCarListData();
-
         } catch (SQLException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -484,18 +484,21 @@ public class DashboardController implements Initializable {
         }
     }
 
+//*********************************Zarządzanie Ubezpieczeniami*********************************//
 
-    //*********************************Zarządzanie Ubezpieczeniami*********************************//
-    //Odczyt z bazy danych
+    /**
+     * Pobiera listę ubezpieczeń z bazy danych.
+     * Dane są powiązane z tabelą pojazdów.
+     *
+     * @return lista obiektów {@link insuranceData} reprezentujących dane ubezpieczeń.
+     */
     public ObservableList<insuranceData> InsuranceListData() {
         ObservableList<insuranceData> list = FXCollections.observableArrayList();
         String sql = "SELECT * FROM ubezpieczenia INNER JOIN pojazdy ON ubezpieczenia.PojazdID = pojazdy.PojazdID";
 
         try {
             connection = database.connectDB();
-
             preparedStatement = connection.prepareStatement(sql);
-
             result = preparedStatement.executeQuery();
 
             while (result.next()) {
@@ -523,10 +526,13 @@ public class DashboardController implements Initializable {
         return list;
     }
 
-    //Dodanie do tabeli
-    private ObservableList<insuranceData> NowInsuranceListData;
+    /**
+     * Wyświetla listę ubezpieczeń w tabeli na interfejsie użytkownika.
+     * Koloruje na czerwono wiersze, gdzie data zakończenia ubezpieczenia
+     * jest wcześniejsza niż bieżąca data.
+     */
     public void ShowInsuranceListData() {
-        NowInsuranceListData = InsuranceListData();
+        ObservableList<insuranceData> NowInsuranceListData = InsuranceListData();
 
         insurance_ubezpieczenie_ID.setCellValueFactory(new PropertyValueFactory<>("UbezpieczenieID"));
         insurance_pojazd_ID.setCellValueFactory(new PropertyValueFactory<>("NumerRejestracyjny"));
@@ -546,10 +552,10 @@ public class DashboardController implements Initializable {
                 } else {
                     Date sqlDate = (Date) insurance.getDataZakonczenia();
                     LocalDate endDate = sqlDate.toLocalDate();
-                    LocalDate currentDate = LocalDate.now(); // Aktualna data z urządzenia
+                    LocalDate currentDate = LocalDate.now();
 
                     if (endDate.isBefore(currentDate)) {
-                        setStyle("-fx-background-color: red;"); // Kolorowanie wiersza na czerwono, gdy ubezpieczenie jest po terminie
+                        setStyle("-fx-background-color: red;"); // Kolor na czerwono, gdy ubezpieczenie jest po terminie
                     } else {
                         setStyle("");
                     }
@@ -558,9 +564,12 @@ public class DashboardController implements Initializable {
         });
     }
 
-    //Wyszukiwanie
+    /**
+     * Wyszukuje dane ubezpieczeń na podstawie danych wprowadzonych w polach tekstowych.
+     *
+     * @param event zdarzenie wywołujące akcję wyszukiwania.
+     */
     public void searchInsuranceData(ActionEvent event) {
-        // Pobieranie tekstu z każdego TextField
         String ubezpieczenieID = ubezpieczenie.getText().trim();
         String pojazdID = idpojazdu.getText().trim();
         String rodzaj = rodzajUb.getText().toLowerCase().trim();
@@ -568,15 +577,13 @@ public class DashboardController implements Initializable {
         String dataZakonczenia = zakoncz.getText().trim();
         String koszt = kosztUb.getText().trim();
 
-        // Pobranie danych z bazy
         ObservableList<insuranceData> insuranceList = InsuranceListData();
-
-        // Filtracja danych na podstawie TextField
         ObservableList<insuranceData> filteredList = FXCollections.observableArrayList();
+
         for (insuranceData insurance : insuranceList) {
             try {
                 if ((ubezpieczenieID.isEmpty() || String.valueOf(insurance.getUbezpieczenieID()).contains(ubezpieczenieID)) &&
-                        (pojazdID.isEmpty() || String.valueOf(insurance.getNumerRejestracyjny()).contains(pojazdID)) &&
+                        (pojazdID.isEmpty() || insurance.getNumerRejestracyjny().contains(pojazdID)) &&
                         (rodzaj.isEmpty() || insurance.getRodzajUbezpieczenia().toLowerCase().contains(rodzaj)) &&
                         (dataRozpoczecia.isEmpty() || new SimpleDateFormat("yyyy-MM-dd").format(insurance.getDataRozpoczecia()).contains(dataRozpoczecia)) &&
                         (dataZakonczenia.isEmpty() || new SimpleDateFormat("yyyy-MM-dd").format(insurance.getDataZakonczenia()).contains(dataZakonczenia)) &&
@@ -587,7 +594,6 @@ public class DashboardController implements Initializable {
                 e.printStackTrace();
             }
         }
-
 
         // Ustawienie danych w tabeli
         insurance_ubezpieczenie_ID.setCellValueFactory(new PropertyValueFactory<>("UbezpieczenieID"));
@@ -600,11 +606,14 @@ public class DashboardController implements Initializable {
         InsuranceTable.setItems(filteredList);
     }
 
-    //Usuwanie
+    /**
+     * Usuwa wybrane ubezpieczenie z bazy danych.
+     *
+     * @param event zdarzenie wywołujące akcję usunięcia.
+     */
     public void deleteInsurance(ActionEvent event) {
         insuranceData selectedInsurance = InsuranceTable.getSelectionModel().getSelectedItem();
         if (selectedInsurance != null) {
-            // Potwierdzenie przed usunięciem
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Potwierdzenie usunięcia");
             alert.setHeaderText("Czy na pewno chcesz usunąć to ubezpieczenie?");
@@ -612,20 +621,13 @@ public class DashboardController implements Initializable {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                Connection connection = null;
-                PreparedStatement preparedStatement = null;
-
                 try {
                     connection = database.connectDB();
-
-                    // Usunięcie ubezpieczenia
                     String deleteInsuranceSql = "DELETE FROM ubezpieczenia WHERE UbezpieczenieID = ?";
                     preparedStatement = connection.prepareStatement(deleteInsuranceSql);
                     preparedStatement.setInt(1, selectedInsurance.getUbezpieczenieID());
                     preparedStatement.executeUpdate();
-
                     ShowInsuranceListData();
-
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -638,7 +640,6 @@ public class DashboardController implements Initializable {
                 }
             }
         } else {
-            // Jeśli nie wybrano żadnego rekordu
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Brak wybranego rekordu");
             alert.setHeaderText("Nie wybrano rekordu do usunięcia");
@@ -647,19 +648,20 @@ public class DashboardController implements Initializable {
         }
     }
 
-    //Dodawanie
+    /**
+     * Dodaje nowe ubezpieczenie do bazy danych na podstawie danych wprowadzonych w polach tekstowych.
+     *
+     * @param event zdarzenie wywołujące akcję dodania ubezpieczenia.
+     */
     public void addInsuranceToDatabase(ActionEvent event) {
-        // Sprawdzenie, czy wszystkie wymagane pola są wypełnione
         if (ubezpieczenie.getText().trim().isEmpty() || idpojazdu.getText().trim().isEmpty() ||
                 rodzajUb.getText().trim().isEmpty() || rozpocz.getText().trim().isEmpty() ||
                 zakoncz.getText().trim().isEmpty() || kosztUb.getText().trim().isEmpty()) {
-
-            // Wyświetlanie alertu, jeśli którekolwiek pole jest puste
             Alert alert = new Alert(Alert.AlertType.ERROR, "Proszę wypełnić wszystkie pola.", ButtonType.OK);
             alert.setTitle("Błąd");
             alert.setHeaderText("Brakujące dane");
             alert.showAndWait();
-            return; // Zakończenie metody
+            return;
         }
 
         String sql = "INSERT INTO ubezpieczenia (UbezpieczenieID, PojazdID, RodzajUbezpieczenia, DataRozpoczęcia, DataZakończenia, Koszt) VALUES (?,?, ?, ?, ?, ?)";
@@ -671,55 +673,39 @@ public class DashboardController implements Initializable {
             preparedStatement.setInt(1, Integer.parseInt(ubezpieczenie.getText().trim()));
             preparedStatement.setInt(2, Integer.parseInt(idpojazdu.getText().trim()));
             preparedStatement.setString(3, rodzajUb.getText().trim());
-            String dateString = rozpocz.getText().trim();
-            if (!dateString.isEmpty()) {
-                Date date = new Date(sdf.parse(dateString).getTime());
-                preparedStatement.setDate(4, date);
-            } else {
-                preparedStatement.setNull(4, Types.DATE);
-            }
-            String zakonczDateString = zakoncz.getText().trim();
-            if (!zakonczDateString.isEmpty()) {
-                Date zakonczDate = new Date(sdf.parse(zakonczDateString).getTime());
-                preparedStatement.setDate(5, zakonczDate);
-            } else {
-                preparedStatement.setNull(5, Types.DATE);
-            }
+            preparedStatement.setDate(4, new java.sql.Date(sdf.parse(rozpocz.getText().trim()).getTime()));
+            preparedStatement.setDate(5, new java.sql.Date(sdf.parse(zakoncz.getText().trim()).getTime()));
             preparedStatement.setDouble(6, Double.parseDouble(kosztUb.getText().trim()));
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
-                // Wyświetlanie alertu po pomyślnym dodaniu ubezpieczenia
                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Ubezpieczenie zostało dodane.", ButtonType.OK);
                 successAlert.setTitle("Sukces");
                 successAlert.setHeaderText("Dodano ubezpieczenie");
                 successAlert.showAndWait();
                 ShowInsuranceListData();
             } else {
-                // Wyświetlanie alertu, jeśli nie udało się dodać ubezpieczenia
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Wystąpił problem z dodaniem ubezpieczenia.", ButtonType.OK);
                 errorAlert.setTitle("Błąd");
                 errorAlert.setHeaderText("Błąd podczas dodawania");
                 errorAlert.showAndWait();
             }
-        } catch (SQLException e) {
-            // Wyświetlanie alertu w przypadku błędu zapytania SQL
-            Alert sqlErrorAlert = new Alert(Alert.AlertType.ERROR, "Błąd zapytania SQL: " + e.getMessage(), ButtonType.OK);
-            sqlErrorAlert.setTitle("Błąd SQL");
-            sqlErrorAlert.setHeaderText("Błąd połączenia z bazą danych");
-            sqlErrorAlert.showAndWait();
-        } catch (ParseException e) {
-            // Wyświetlanie alertu w przypadku błędu parsowania daty
-            Alert parseErrorAlert = new Alert(Alert.AlertType.ERROR, "Błąd parsowania daty: " + e.getMessage(), ButtonType.OK);
-            parseErrorAlert.setTitle("Błąd daty");
-            parseErrorAlert.setHeaderText("Niepoprawny format daty");
-            parseErrorAlert.showAndWait();
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Błąd: " + e.getMessage(), ButtonType.OK);
+            errorAlert.setTitle("Błąd");
+            errorAlert.setHeaderText("Wystąpił problem");
+            errorAlert.showAndWait();
         }
     }
 
-
     //*********************************Zarządzanie Kierowcami*********************************//
-    //Odczyt z bazy danych
+
+    /**
+     * Pobiera listę kierowców z bazy danych.
+     *
+     * @return lista obiektów {@link driverData} reprezentujących dane kierowców.
+     */
     public ObservableList<driverData> getDriverListData() {
         ObservableList<driverData> list = FXCollections.observableArrayList();
         String sql = "SELECT * FROM kierowcy";
@@ -752,10 +738,11 @@ public class DashboardController implements Initializable {
         return list;
     }
 
-    //Dodanie do tabeli
-    public ObservableList<driverData> NowDriverListData;
+    /**
+     * Wyświetla listę kierowców w tabeli na interfejsie użytkownika.
+     */
     public void ShowDriverListData() {
-        NowDriverListData = getDriverListData();
+        ObservableList<driverData> NowDriverListData = getDriverListData();
 
         drivers_pesel.setCellValueFactory(new PropertyValueFactory<>("pesel"));
         drivers_imie.setCellValueFactory(new PropertyValueFactory<>("imie"));
@@ -765,10 +752,13 @@ public class DashboardController implements Initializable {
         drivers_uprawnienia.setCellValueFactory(new PropertyValueFactory<>("uprawnienia"));
 
         DriversTable.setItems(NowDriverListData);
-
     }
 
-    //Wyszukiwanie
+    /**
+     * Wyszukuje kierowców na podstawie danych wprowadzonych w polach tekstowych.
+     *
+     * @param event zdarzenie wywołujące akcję wyszukiwania.
+     */
     public void searchDriverData(ActionEvent event) {
         String pesel = peselKierowcy.getText().trim();
         String imie = imieKierowcy.getText().trim();
@@ -807,23 +797,26 @@ public class DashboardController implements Initializable {
         DriversTable.setItems(filteredList);
     }
 
-    //Usuwanie
+    /**
+     * Usuwa wybranego kierowcę z bazy danych.
+     * Usunięcie kierowcy powoduje także usunięcie jego przypisań z powiązanej tabeli.
+     *
+     * @param event zdarzenie wywołujące akcję usunięcia.
+     */
     public void deleteDriver(ActionEvent event) {
         driverData selectedDriver = DriversTable.getSelectionModel().getSelectedItem();
         if (selectedDriver != null) {
-            // Potwierdzenie przed usunięciem
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Potwierdzenie usunięcia");
-            alert.setHeaderText("Czy na pewno chcesz usunąć tego kierowcę? Kontynuacja spowoduje również usunięcie tabeli mu przypisanej! ");
+            alert.setHeaderText("Czy na pewno chcesz usunąć tego kierowcę? Kontynuacja spowoduje również usunięcie tabeli mu przypisanej!");
             alert.setContentText("Usunięcie jest nieodwracalne.");
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-
                 try {
                     connection = database.connectDB();
 
-                    // Usuwanie przypisania do tabeli powiązanej z kierowcą
+                    // Usuwanie przypisań
                     String deleteAssignmentsSql = "DELETE FROM przypisania WHERE PESEL = ?";
                     preparedStatement = connection.prepareStatement(deleteAssignmentsSql);
                     preparedStatement.setString(1, selectedDriver.getPesel());
@@ -848,7 +841,6 @@ public class DashboardController implements Initializable {
                 }
             }
         } else {
-            // Nie wybrano żadnego rekordu
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Brak wybranego rekordu");
             alert.setHeaderText("Nie wybrano rekordu do usunięcia");
@@ -857,14 +849,15 @@ public class DashboardController implements Initializable {
         }
     }
 
-    //Dodawanie
+    /**
+     * Dodaje nowego kierowcę do bazy danych na podstawie danych wprowadzonych w polach tekstowych.
+     *
+     * @param event zdarzenie wywołujące akcję dodania kierowcy.
+     */
     public void addDriverToDatabase(ActionEvent event) {
-        // Sprawdzenie, czy wszystkie wymagane pola są wypełnione
         if (peselKierowcy.getText().trim().isEmpty() || imieKierowcy.getText().trim().isEmpty() ||
                 nazwiskoKierowcy.getText().trim().isEmpty() || dataKierowcy.getText().trim().isEmpty() ||
                 nrprawajazdy.getText().trim().isEmpty() || uprawnieniaKierowcy.getText().trim().isEmpty()) {
-
-            // Wyświetlanie alertu, jeśli którekolwiek pole jest puste
             Alert alert = new Alert(Alert.AlertType.ERROR, "Proszę wypełnić wszystkie pola.", ButtonType.OK);
             alert.setTitle("Błąd");
             alert.setHeaderText("Brakujące dane");
@@ -881,49 +874,40 @@ public class DashboardController implements Initializable {
             preparedStatement.setLong(1, Long.parseLong(peselKierowcy.getText().trim()));
             preparedStatement.setString(2, imieKierowcy.getText().trim());
             preparedStatement.setString(3, nazwiskoKierowcy.getText().trim());
-            String dataUrodzeniaString = dataKierowcy.getText().trim();
-            if (!dataUrodzeniaString.isEmpty()) {
-                Date dataUrodzenia = new Date(sdf.parse(dataUrodzeniaString).getTime());
-                preparedStatement.setDate(4, dataUrodzenia);
-            } else {
-                preparedStatement.setNull(4, Types.DATE);
-            }
+            preparedStatement.setDate(4, new java.sql.Date(sdf.parse(dataKierowcy.getText().trim()).getTime()));
             preparedStatement.setString(5, nrprawajazdy.getText().trim());
             preparedStatement.setString(6, uprawnieniaKierowcy.getText().trim());
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
-                // Wyświetlanie alertu po pomyślnym dodaniu kierowcy
                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Kierowca został dodany.", ButtonType.OK);
                 successAlert.setTitle("Sukces");
                 successAlert.setHeaderText("Dodano kierowcę");
                 successAlert.showAndWait();
                 ShowDriverListData();
             } else {
-                // Wyświetlanie alertu, jeśli nie udało się dodać kierowcy
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Wystąpił problem z dodaniem kierowcy.", ButtonType.OK);
                 errorAlert.setTitle("Błąd");
                 errorAlert.setHeaderText("Błąd podczas dodawania");
                 errorAlert.showAndWait();
             }
-        } catch (SQLException e) {
-            // Wyświetlanie alertu w przypadku błędu zapytania SQL
-            Alert sqlErrorAlert = new Alert(Alert.AlertType.ERROR, "Błąd zapytania SQL: " + e.getMessage(), ButtonType.OK);
-            sqlErrorAlert.setTitle("Błąd SQL");
-            sqlErrorAlert.setHeaderText("Błąd połączenia z bazą danych");
-            sqlErrorAlert.showAndWait();
-        } catch (ParseException e) {
-            // Wyświetlanie alertu w przypadku błędu parsowania daty
-            Alert parseErrorAlert = new Alert(Alert.AlertType.ERROR, "Błąd parsowania daty: " + e.getMessage(), ButtonType.OK);
-            parseErrorAlert.setTitle("Błąd daty");
-            parseErrorAlert.setHeaderText("Niepoprawny format daty");
-            parseErrorAlert.showAndWait();
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Błąd: " + e.getMessage(), ButtonType.OK);
+            errorAlert.setTitle("Błąd");
+            errorAlert.setHeaderText("Wystąpił problem");
+            errorAlert.showAndWait();
         }
     }
 
 
     //*********************************Zarządzanie Przeglądami*********************************//
-    //Odczyt z bazy danych
+
+    /**
+     * Pobiera listę przeglądów z bazy danych.
+     *
+     * @return lista obiektów {@link inspectionData} reprezentujących dane przeglądów.
+     */
     public ObservableList<inspectionData> getInspectionListData() {
         ObservableList<inspectionData> list = FXCollections.observableArrayList();
         String sql = "SELECT * FROM przegladtechniczny";
@@ -957,10 +941,12 @@ public class DashboardController implements Initializable {
         return list;
     }
 
-    //Dodanie do tabeli
-    private ObservableList<inspectionData> InspectionListData;
+    /**
+     * Wyświetla listę przeglądów w tabeli na interfejsie użytkownika.
+     * Koloruje wiersze na czerwono, jeśli data przeglądu + 1 rok jest wcześniejsza niż aktualna data.
+     */
     public void ShowInspectionListData() {
-        InspectionListData = getInspectionListData();
+        ObservableList<inspectionData> InspectionListData = getInspectionListData();
 
         inspection_id.setCellValueFactory(new PropertyValueFactory<>("przegladID"));
         inspection_id_pojazdu.setCellValueFactory(new PropertyValueFactory<>("pojazdID"));
@@ -983,10 +969,10 @@ public class DashboardController implements Initializable {
 
                     // Określenie daty wygaśnięcia (data przeglądu + 1 rok)
                     LocalDate expiryDate = inspectionDate.plusYears(1);
-                    LocalDate currentDate = LocalDate.now(); // Aktualna data z urządzenia
+                    LocalDate currentDate = LocalDate.now();
 
                     if (expiryDate.isBefore(currentDate)) {
-                        setStyle("-fx-background-color: red;"); // Kolorowanie wiersza na czerwono, gdy przegląd jest po terminie
+                        setStyle("-fx-background-color: red;"); // Kolorowanie na czerwono
                     } else {
                         setStyle("");
                     }
@@ -995,7 +981,11 @@ public class DashboardController implements Initializable {
         });
     }
 
-    //Wyszukiwanie
+    /**
+     * Wyszukuje przeglądy na podstawie danych wprowadzonych w polach tekstowych.
+     *
+     * @param event zdarzenie wywołujące akcję wyszukiwania.
+     */
     public void searchInspectionData(ActionEvent event) {
         String przegladID = idprzeglad.getText().trim();
         String pojazdID = pojazdidprzeglad.getText().trim();
@@ -1005,7 +995,6 @@ public class DashboardController implements Initializable {
 
         ObservableList<inspectionData> inspectionList = getInspectionListData();
 
-        // Filtracja danych na podstawie TextField
         ObservableList<inspectionData> filteredList = FXCollections.observableArrayList();
         for (inspectionData przeglad : inspectionList) {
             try {
@@ -1030,12 +1019,15 @@ public class DashboardController implements Initializable {
         InspectionTable.setItems(filteredList);
     }
 
-    //Usuwanie
+    /**
+     * Usuwa wybrany przegląd z bazy danych.
+     *
+     * @param event zdarzenie wywołujące akcję usunięcia przeglądu.
+     */
     public void deleteInspectionRecord(ActionEvent event) {
         inspectionData selectedInspection = InspectionTable.getSelectionModel().getSelectedItem();
 
         if (selectedInspection != null) {
-            // Potwierdzenie przed usunięciem
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Potwierdzenie usunięcia");
             alert.setHeaderText("Czy na pewno chcesz usunąć ten przegląd?");
@@ -1065,7 +1057,6 @@ public class DashboardController implements Initializable {
                 }
             }
         } else {
-            // Nie wybrano żadnego rekordu
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Brak wybranego rekordu");
             alert.setHeaderText("Nie wybrano rekordu do usunięcia");
@@ -1074,7 +1065,11 @@ public class DashboardController implements Initializable {
         }
     }
 
-    //Dodawanie
+    /**
+     * Dodaje nowy przegląd do bazy danych na podstawie danych wprowadzonych w polach tekstowych.
+     *
+     * @param event zdarzenie wywołujące akcję dodania przeglądu.
+     */
     public void addInspectionToDatabase(ActionEvent event) {
         if (pojazdidprzeglad.getText().trim().isEmpty() || dataprzeglad.getText().trim().isEmpty() || wynikprzeglad.getText().trim().isEmpty()) {
 
@@ -1082,10 +1077,10 @@ public class DashboardController implements Initializable {
             alert.setTitle("Błąd");
             alert.setHeaderText("Brakujące dane");
             alert.showAndWait();
-            return; // Zakończenie metody
+            return;
         }
 
-        String sql = "INSERT INTO przegladtechniczny (PrzegladID,PojazdID, DataPrzegladu, WynikPrzegladu, Uwagi) VALUES (?,?, ?, ?, ?)";
+        String sql = "INSERT INTO przegladtechniczny (PrzegladID, PojazdID, DataPrzegladu, WynikPrzegladu, Uwagi) VALUES (?,?, ?, ?, ?)";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
@@ -1093,48 +1088,40 @@ public class DashboardController implements Initializable {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, Integer.parseInt(idprzeglad.getText().trim()));
             preparedStatement.setInt(2, Integer.parseInt(pojazdidprzeglad.getText().trim()));
-            String dataPrzegladuString = dataprzeglad.getText().trim();
-            if (!dataPrzegladuString.isEmpty()) {
-                Date dataPrzegladu = new Date(sdf.parse(dataPrzegladuString).getTime());
-                preparedStatement.setDate(3, dataPrzegladu);
-            } else {
-                preparedStatement.setNull(3, Types.DATE);
-            }
+            preparedStatement.setDate(3, new java.sql.Date(sdf.parse(dataprzeglad.getText().trim()).getTime()));
             preparedStatement.setString(4, wynikprzeglad.getText().trim());
             preparedStatement.setString(5, uwagiprzeglad.getText().trim());
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
-                // Wyświetlanie alertu po pomyślnym dodaniu przeglądu
                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "Przegląd został dodany.", ButtonType.OK);
                 successAlert.setTitle("Sukces");
                 successAlert.setHeaderText("Dodano przegląd");
                 successAlert.showAndWait();
                 ShowInspectionListData();
             } else {
-                // Wyświetlanie alertu, jeśli nie udało się dodać przeglądu
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Wystąpił problem z dodaniem przeglądu.", ButtonType.OK);
                 errorAlert.setTitle("Błąd");
                 errorAlert.setHeaderText("Błąd podczas dodawania");
                 errorAlert.showAndWait();
             }
-        } catch (SQLException e) {
-            // Wyświetlanie alertu w przypadku błędu zapytania SQL
-            Alert sqlErrorAlert = new Alert(Alert.AlertType.ERROR, "Błąd zapytania SQL: " + e.getMessage(), ButtonType.OK);
-            sqlErrorAlert.setTitle("Błąd SQL");
-            sqlErrorAlert.setHeaderText("Błąd połączenia z bazą danych");
-            sqlErrorAlert.showAndWait();
-        } catch (ParseException e) {
-            // Wyświetlanie alertu w przypadku błędu parsowania daty
-            Alert parseErrorAlert = new Alert(Alert.AlertType.ERROR, "Błąd parsowania daty: " + e.getMessage(), ButtonType.OK);
-            parseErrorAlert.setTitle("Błąd daty");
-            parseErrorAlert.setHeaderText("Niepoprawny format daty");
-            parseErrorAlert.showAndWait();
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Błąd: " + e.getMessage(), ButtonType.OK);
+            errorAlert.setTitle("Błąd");
+            errorAlert.setHeaderText("Wystąpił problem");
+            errorAlert.showAndWait();
         }
     }
 
 
     //*********************************Liczba Kierowców*********************************//
+
+    /**
+     * Pobiera liczbę kierowców z bazy danych.
+     *
+     * @return liczba kierowców w bazie danych.
+     */
     public int getDriverCount() {
         int driverCount = 0;
         String sql = "SELECT COUNT(*) AS liczba_kierowcow FROM kierowcy";
@@ -1150,15 +1137,23 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
         return driverCount;
-
     }
 
+    /**
+     * Aktualizuje etykietę wyświetlającą liczbę kierowców na interfejsie użytkownika.
+     */
     public void updateDriverCountLabel() {
         int driverCount = getDriverCount();
         liczba_kierowcow.setText(" " + driverCount);
     }
 
-    //*********************************Liczba Pojazdów*********************************//
+//*********************************Liczba Pojazdów*********************************//
+
+    /**
+     * Pobiera liczbę pojazdów z bazy danych.
+     *
+     * @return liczba pojazdów w bazie danych.
+     */
     public int getCarsCount() {
         int carsCount = 0;
         String sql = "SELECT COUNT(*) AS liczba_pojazdow FROM pojazdy";
@@ -1174,15 +1169,23 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
         return carsCount;
-
     }
 
+    /**
+     * Aktualizuje etykietę wyświetlającą liczbę pojazdów na interfejsie użytkownika.
+     */
     public void updateCarsCountLabel() {
         int carsCount = getCarsCount();
         liczba_pojazdow.setText(" " + carsCount);
     }
 
-    //*********************************Liczba nieaktualnych ubezpieczeń*********************************//
+//*********************************Liczba nieaktualnych ubezpieczeń*********************************//
+
+    /**
+     * Pobiera liczbę nieaktualnych ubezpieczeń z bazy danych.
+     *
+     * @return liczba ubezpieczeń, których data zakończenia jest wcześniejsza niż aktualna data.
+     */
     public int getValidInsuranceCount() {
         int validInsuranceCount = 0;
         String sql = "SELECT COUNT(*) AS liczba_waznych_ubezpieczen FROM ubezpieczenia WHERE DataZakończenia < CURRENT_DATE";
@@ -1200,12 +1203,21 @@ public class DashboardController implements Initializable {
         return validInsuranceCount;
     }
 
+    /**
+     * Aktualizuje etykietę wyświetlającą liczbę nieaktualnych ubezpieczeń na interfejsie użytkownika.
+     */
     public void updateInsuranceLabel() {
         int validInsurances = getValidInsuranceCount();
         powiadomieniaUbezpieczenia.setText(" " + validInsurances);
     }
 
-    //*********************************Liczba nieaktualnych przeglądów*********************************//
+//*********************************Liczba nieaktualnych przeglądów*********************************//
+
+    /**
+     * Pobiera liczbę nieaktualnych przeglądów z bazy danych.
+     *
+     * @return liczba przeglądów, których ważność wygasła (data przeglądu + 1 rok jest wcześniejsza niż aktualna data).
+     */
     public int getInvalidInspectionCount() {
         int invalidInspectionCount = 0;
         String sql = "SELECT COUNT(*) AS liczba_niewaznych_przegladow " +
@@ -1225,13 +1237,20 @@ public class DashboardController implements Initializable {
         return invalidInspectionCount;
     }
 
+    /**
+     * Aktualizuje etykietę wyświetlającą liczbę nieaktualnych przeglądów na interfejsie użytkownika.
+     */
     public void updateInspectionLabel() {
         int validInspections = getInvalidInspectionCount();
         powiadomieniaPrzeglady.setText(" " + validInspections);
     }
 
 
-    //Czyszczenie wszytkich TextField'ów
+    /**
+     * Czyści wszystkie pola tekstowe (TextField) w interfejsie użytkownika.
+     *
+     * @param event zdarzenie wywołane przez użytkownika, np. kliknięcie przycisku.
+     */
     public void clearTextFields(ActionEvent event) {
         ubezpieczenie.setText("");
         idpojazdu.setText("");
@@ -1262,7 +1281,12 @@ public class DashboardController implements Initializable {
         drivers_data_ur.setText("");
     }
 
-
+    /**
+     * Inicjalizuje dane i wywołuje metody odpowiedzialne za wyświetlanie danych w interfejsie użytkownika.
+     *
+     * @param location  lokalizacja zasobów do zainicjalizowania.
+     * @param resources zasoby wymagane do inicjalizacji.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         displayUsername();
@@ -1275,6 +1299,6 @@ public class DashboardController implements Initializable {
         updateCarsCountLabel();
         updateInspectionLabel();
         updateInsuranceLabel();
-
     }
 }
+

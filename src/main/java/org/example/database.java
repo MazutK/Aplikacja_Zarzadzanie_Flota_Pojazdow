@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,8 +9,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
+/**
+ * author Kacper Mazur
+ *  *  @version 1.0
+ * Klasa obsługująca połączenie z bazą danych oraz jej inicjalizację.
+ * Automatycznie sprawdza, czy baza danych istnieje, a jeśli nie, tworzy ją i importuje dane z pliku SQL.
+ */
 public class database {
 
+    /**
+     * Lączy z bazą danych.
+     * Jeśli baza danych nie istnieje, tworzy ją i importuje dane z pliku SQL.
+     *
+     * @return Połączenie z bazą danych.
+
+     * @since 1.0
+     */
     public static Connection connectDB() {
         Connection connection = null;
         try {
@@ -44,6 +59,11 @@ public class database {
         return connection;
     }
 
+    /**
+     * Importuje dane bazy danych z pliku SQL znajdującego się w zasobach.
+     *
+     * @param connection obiekt {@link Connection} reprezentujący połączenie z bazą danych
+     */
     private static void importDatabase(Connection connection) {
         try {
             // Odczyt pliku SQL z zasobów
