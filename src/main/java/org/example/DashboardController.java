@@ -165,11 +165,6 @@ public class DashboardController implements Initializable {
 
 
     //*********************************Zarządzanie Aplikacją*********************************//
-    private double xOffset = 0;
-    private double yOffset = 0;
-    private double prevWidth = 800;
-    private double prevHeight = 600;
-    private boolean isDocked = false;
 
     @FXML
     private void minimize(ActionEvent event) {
@@ -494,7 +489,7 @@ public class DashboardController implements Initializable {
     //Odczyt z bazy danych
     public ObservableList<insuranceData> InsuranceListData() {
         ObservableList<insuranceData> list = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM ubezpieczenia";
+        String sql = "SELECT * FROM ubezpieczenia INNER JOIN pojazdy ON ubezpieczenia.PojazdID = pojazdy.PojazdID";
 
         try {
             connection = database.connectDB();
@@ -506,7 +501,7 @@ public class DashboardController implements Initializable {
             while (result.next()) {
                 insuranceData insurance = new insuranceData(
                         result.getInt("UbezpieczenieID"),
-                        result.getInt("PojazdID"),
+                        result.getString("NumerRejestracyjny"),
                         result.getString("RodzajUbezpieczenia"),
                         result.getDate("DataRozpoczęcia"),
                         result.getDate("DataZakończenia"),
@@ -534,7 +529,7 @@ public class DashboardController implements Initializable {
         NowInsuranceListData = InsuranceListData();
 
         insurance_ubezpieczenie_ID.setCellValueFactory(new PropertyValueFactory<>("UbezpieczenieID"));
-        insurance_pojazd_ID.setCellValueFactory(new PropertyValueFactory<>("PojazdID"));
+        insurance_pojazd_ID.setCellValueFactory(new PropertyValueFactory<>("NumerRejestracyjny"));
         insurance_rodzaj.setCellValueFactory(new PropertyValueFactory<>("RodzajUbezpieczenia"));
         insurance_data_rozpoczecia.setCellValueFactory(new PropertyValueFactory<>("DataRozpoczecia"));
         insurance_data_zakonczenia.setCellValueFactory(new PropertyValueFactory<>("DataZakonczenia"));
@@ -581,7 +576,7 @@ public class DashboardController implements Initializable {
         for (insuranceData insurance : insuranceList) {
             try {
                 if ((ubezpieczenieID.isEmpty() || String.valueOf(insurance.getUbezpieczenieID()).contains(ubezpieczenieID)) &&
-                        (pojazdID.isEmpty() || String.valueOf(insurance.getPojazdID()).contains(pojazdID)) &&
+                        (pojazdID.isEmpty() || String.valueOf(insurance.getNumerRejestracyjny()).contains(pojazdID)) &&
                         (rodzaj.isEmpty() || insurance.getRodzajUbezpieczenia().toLowerCase().contains(rodzaj)) &&
                         (dataRozpoczecia.isEmpty() || new SimpleDateFormat("yyyy-MM-dd").format(insurance.getDataRozpoczecia()).contains(dataRozpoczecia)) &&
                         (dataZakonczenia.isEmpty() || new SimpleDateFormat("yyyy-MM-dd").format(insurance.getDataZakonczenia()).contains(dataZakonczenia)) &&
@@ -596,7 +591,7 @@ public class DashboardController implements Initializable {
 
         // Ustawienie danych w tabeli
         insurance_ubezpieczenie_ID.setCellValueFactory(new PropertyValueFactory<>("UbezpieczenieID"));
-        insurance_pojazd_ID.setCellValueFactory(new PropertyValueFactory<>("PojazdID"));
+        insurance_pojazd_ID.setCellValueFactory(new PropertyValueFactory<>("NumerRejestracyjny"));
         insurance_rodzaj.setCellValueFactory(new PropertyValueFactory<>("RodzajUbezpieczenia"));
         insurance_data_rozpoczecia.setCellValueFactory(new PropertyValueFactory<>("DataRozpoczecia"));
         insurance_data_zakonczenia.setCellValueFactory(new PropertyValueFactory<>("DataZakonczenia"));
@@ -766,7 +761,7 @@ public class DashboardController implements Initializable {
         drivers_imie.setCellValueFactory(new PropertyValueFactory<>("imie"));
         drivers_nazwisko.setCellValueFactory(new PropertyValueFactory<>("nazwisko"));
         drivers_data_ur.setCellValueFactory(new PropertyValueFactory<>("dataUrodzenia"));
-        drivers_nr_prawa_jazdy.setCellValueFactory(new PropertyValueFactory<>("numerPrawoJazdy"));
+        drivers_nr_prawa_jazdy.setCellValueFactory(new PropertyValueFactory<>("NumerPrawoJazdy"));
         drivers_uprawnienia.setCellValueFactory(new PropertyValueFactory<>("uprawnienia"));
 
         DriversTable.setItems(NowDriverListData);
@@ -792,7 +787,7 @@ public class DashboardController implements Initializable {
                         (imie.isEmpty() || driver.getImie().toLowerCase().contains(imie.toLowerCase())) &&
                         (nazwisko.isEmpty() || driver.getNazwisko().toLowerCase().contains(nazwisko.toLowerCase())) &&
                         (dataUrodzenia.isEmpty() || driver.getDataUrodzenia().toString().contains(dataUrodzenia)) &&
-                        (nrPrawaJazdy.isEmpty() || driver.getNrPrawoJazdy().contains(nrPrawaJazdy)) &&
+                        (nrPrawaJazdy.isEmpty() || driver.getNumerPrawoJazdy().contains(nrPrawaJazdy)) &&
                         (uprawnienia.isEmpty() || driver.getUprawnienia().toLowerCase().contains(uprawnienia.toLowerCase()))) {
                     filteredList.add(driver);
                 }
@@ -806,7 +801,7 @@ public class DashboardController implements Initializable {
         drivers_imie.setCellValueFactory(new PropertyValueFactory<>("imie"));
         drivers_nazwisko.setCellValueFactory(new PropertyValueFactory<>("nazwisko"));
         drivers_data_ur.setCellValueFactory(new PropertyValueFactory<>("dataUrodzenia"));
-        drivers_nr_prawa_jazdy.setCellValueFactory(new PropertyValueFactory<>("numerPrawoJazdy"));
+        drivers_nr_prawa_jazdy.setCellValueFactory(new PropertyValueFactory<>("NumerPrawoJazdy"));
         drivers_uprawnienia.setCellValueFactory(new PropertyValueFactory<>("uprawnienia"));
 
         DriversTable.setItems(filteredList);
