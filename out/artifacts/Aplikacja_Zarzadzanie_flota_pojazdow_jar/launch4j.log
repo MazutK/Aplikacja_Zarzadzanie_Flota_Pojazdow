@@ -1,0 +1,21 @@
+
+
+Version:	3.50
+CmdLine:	C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\out\artifacts\Aplikacja_Zarzadzanie_flota_pojazdow_jar\AplikacjaZarzadzanieFlotaPojazdow.exe --l4j-debug
+JNI:		No
+WOW64:		Yes
+Working dir:	C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\out\artifacts\Aplikacja_Zarzadzanie_flota_pojazdow_jar\.
+Requires JDK:	Yes
+Requires 64-Bit: No
+Java min ver:	
+Java max ver:	
+Substitute:	JAVA_HOME = C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\
+Substitute:	PATH = C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\bin;C:\Python313\Scripts\;C:\Python313\;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\\MinGW\\bin;C:\MinGW\bin;C:\Program Files\Wolfram Research\WolframScript\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;;C:\Program Files\Common Files\Datawatch\Drivers\7.1.5\jre\bin;C:\Program Files\Common Files\Datawatch\Drivers\7.1.5\jre\bin\server;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\Kacper Mazur\AppData\Local\Microsoft\WindowsApps;C:\MinGW\bin;C:\Users\Kacper Mazur\AppData\Local\Programs\Microsoft VS Code\bin;C:\\MinGW\\bin;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2023.3.4\bin;C:\Users\Kacper Mazur\AppData\Local\JetBrains\Toolbox\scripts;;C:\Program Files\JetBrains\IntelliJ IDEA 2024.3\bin;;C:\Users\Kacper Mazur\AppData\Roaming\npm;C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\\bin
+JRE paths:	C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\;C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\bin;C:\Python313\Scripts\;C:\Python313\;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\\MinGW\\bin;C:\MinGW\bin;C:\Program Files\Wolfram Research\WolframScript\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;;C:\Program Files\Common Files\Datawatch\Drivers\7.1.5\jre\bin;C:\Program Files\Common Files\Datawatch\Drivers\7.1.5\jre\bin\server;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\Kacper Mazur\AppData\Local\Microsoft\WindowsApps;C:\MinGW\bin;C:\Users\Kacper Mazur\AppData\Local\Programs\Microsoft VS Code\bin;C:\\MinGW\\bin;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2023.3.4\bin;C:\Users\Kacper Mazur\AppData\Local\JetBrains\Toolbox\scripts;;C:\Program Files\JetBrains\IntelliJ IDEA 2024.3\bin;;C:\Users\Kacper Mazur\AppData\Roaming\npm;C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\\bin
+Check launcher:	C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\bin\javaw.exe (OK)
+Check javac:	C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\bin\javac.exe (OK)
+Version string: 1.021.000_005 / 64-Bit (OK)
+Launcher:	C:\Program Files\Eclipse Adoptium\jdk-21.0.5.11-hotspot\bin\javaw.exe
+Launcher args:	-jar "C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\out\artifacts\Aplikacja_Zarzadzanie_flota_pojazdow_jar\AplikacjaZarzadzanieFlotaPojazdow.exe"
+Args length:	171/32768 chars
+Exit code:	0

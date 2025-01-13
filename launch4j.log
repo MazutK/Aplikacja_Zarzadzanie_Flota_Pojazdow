@@ -1,0 +1,20 @@
+
+
+Version:	3.50
+CmdLine:	C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\Zarz¹dzanieFlot¹Pojazdów.exe --l4j-debug
+JNI:		No
+WOW64:		Yes
+Working dir:	C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\.
+Requires JDK:	No
+Requires 64-Bit: No
+Java min ver:	
+Java max ver:	
+JRE paths:	C:\Program Files (x86)\Java\jre1.8.0_431
+Check launcher:	C:\Program Files (x86)\Java\jre1.8.0_431\bin\javaw.exe (OK)
+Version string: 1.008.000_431 / 32-Bit (OK)
+Main class:	org.example.App
+Info:		Classpath not defined.
+Launcher:	C:\Program Files (x86)\Java\jre1.8.0_431\bin\javaw.exe
+Launcher args:	-classpath "C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\Zarz¹dzanieFlot¹Pojazdów.exe" org.example.App
+Args length:	129/32768 chars
+Exit code:	0

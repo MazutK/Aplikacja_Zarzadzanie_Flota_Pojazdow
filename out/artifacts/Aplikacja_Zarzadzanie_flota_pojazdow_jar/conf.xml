@@ -3,7 +3,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\out\artifacts\Aplikacja_Zarzadzanie_flota_pojazdow_jar\Aplikacja_Zarzadzanie_flota_pojazdow.jar</jar>
-  <outfile>C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\out\artifacts\Aplikacja_Zarzadzanie_flota_pojazdow_jar\AplikacjaZarzadzanieFlotaPojazdow.exe</outfile>
+  <outfile>C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\ZarządzanieFlotąPojazdów.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -14,11 +14,14 @@
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <icon></icon>
+  <classPath>
+    <mainClass>org.example.App</mainClass>
+  </classPath>
   <jre>
-    <path>%JAVA_HOME%;%PATH%</path>
+    <path>C:\Program Files (x86)\Java\jre1.8.0_431</path>
     <requiresJdk>false</requiresJdk>
-    <requires64Bit>true</requires64Bit>
-    <minVersion>21</minVersion>
+    <requires64Bit>false</requires64Bit>
+    <minVersion></minVersion>
     <maxVersion></maxVersion>
   </jre>
 </launch4jConfig>
