@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\out\artifacts\Aplikacja_Zarzadzanie_flota_pojazdow_jar\Aplikacja_Zarzadzanie_flota_pojazdow.jar</jar>
+  <outfile>C:\Users\Kacper Mazur\IdeaProjects\Aplikacja_Zarzadzanie_flota_pojazdow\out\artifacts\Aplikacja_Zarzadzanie_flota_pojazdow_jar\AplikacjaZarzadzanieFlotaPojazdow.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon></icon>
+  <jre>
+    <path>%JAVA_HOME%;%PATH%</path>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>true</requires64Bit>
+    <minVersion>21</minVersion>
+    <maxVersion></maxVersion>
+  </jre>
+</launch4jConfig>
